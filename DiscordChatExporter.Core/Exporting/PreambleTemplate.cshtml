@@ -15,9 +15,6 @@
             ? darkVariant
             : lightVariant;
 
-    string GetFontUrl(int weight) =>
-        $"https://cdn.jsdelivr.net/gh/Tyrrrz/DiscordFonts@master/whitney-{weight}.woff";
-
     ValueTask<string> ResolveAssetUrlAsync(string url) =>
         Context.ResolveAssetUrlAsync(url, CancellationToken);
 
@@ -41,31 +38,31 @@
     @{/* Styling */}
     <style>
         @@font-face {
-            src: url(@await ResolveAssetUrlAsync(GetFontUrl(300)));
+			src: url(https://cdn.jsdelivr.net/gh/Tyrrrz/DiscordFonts@master/whitney-300.woff);
             font-family: Whitney;
             font-weight: 300;
         }
 
         @@font-face {
-            src: url(@await ResolveAssetUrlAsync(GetFontUrl(400)));
+            src: url(https://cdn.jsdelivr.net/gh/Tyrrrz/DiscordFonts@master/whitney-400.woff);
             font-family: Whitney;
             font-weight: 400;
         }
 
         @@font-face {
-            src: url(@await ResolveAssetUrlAsync(GetFontUrl(500)));
+            src: url(https://cdn.jsdelivr.net/gh/Tyrrrz/DiscordFonts@master/whitney-500.woff);
             font-family: Whitney;
             font-weight: 500;
         }
 
         @@font-face {
-            src: url(@await ResolveAssetUrlAsync(GetFontUrl(600)));
+            src: url(https://cdn.jsdelivr.net/gh/Tyrrrz/DiscordFonts@master/whitney-600.woff);
             font-family: Whitney;
             font-weight: 600;
         }
 
         @@font-face {
-            src: url(@await ResolveAssetUrlAsync(GetFontUrl(700)));
+            src: url(https://cdn.jsdelivr.net/gh/Tyrrrz/DiscordFonts@master/whitney-700.woff);
             font-family: Whitney;
             font-weight: 700;
         }
