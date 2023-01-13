@@ -47,14 +47,14 @@ jobs:
 
       - name: Create release
         id: create_release
-        uses: "marvinpinto/action-automatic-releases@latest"
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          prerelease: false
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          title: ${{ github.ref }}
-          automatic_release_tag: ${{ github.ref }}
-          files: |
-            DiscordChatExporter.Cli.zip
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_name: DiscordChatExporter.zip
+          asset_content_type: application/zip
+          
   notify:
     needs: deploy
     runs-on: ubuntu-latest
