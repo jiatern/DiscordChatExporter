@@ -51,9 +51,8 @@ jobs:
         with:
           prerelease: false
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          title: ${{ github.ref }}
+          automatic_release_tag: ${{ github.ref }}
           files: |
             DiscordChatExporter.Cli.zip
   notify:
