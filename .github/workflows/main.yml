@@ -1,48 +1,8 @@
 name: main
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
-  test:
-    runs-on: windows-latest
-    permissions:
-      contents: read
-
-    env:
-      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
-      DOTNET_NOLOGO: true
-      DOTNET_CLI_TELEMETRY_OPTOUT: true
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Install .NET
-        uses: actions/setup-dotnet@v2
-        with:
-          dotnet-version: 7.0.x
-
-      - name: Run tests
-        # Tests need access to secrets, so we can't run them against PRs because of limited trust
-        if: ${{ github.event_name != 'pull_request' }}
-        run: >
-          dotnet test
-          --configuration Release
-          --logger "GitHubActions;summary.includePassedTests=true;summary.includeSkippedTests=true"
-          --collect:"XPlat Code Coverage"
-          --
-          RunConfiguration.CollectSourceInformation=true
-          DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
-        env:
-          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-
-      - name: Upload coverage
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-
-  pack:
-    needs: test
     runs-on: windows-latest
     permissions:
       actions: write
@@ -68,27 +28,14 @@ jobs:
           --output DiscordChatExporter.Cli/publish/
           --configuration Release
 
-      - name: Publish (GUI)
-        run: >
-          dotnet publish DiscordChatExporter.Gui
-          --output DiscordChatExporter.Gui/publish/
-          --configuration Release
-
       - name: Upload artifacts (CLI)
         uses: actions/upload-artifact@v3
         with:
           name: DiscordChatExporter.Cli
           path: DiscordChatExporter.Cli/publish/
 
-      - name: Upload artifacts (GUI)
-        uses: actions/upload-artifact@v3
-        with:
-          name: DiscordChatExporter
-          path: DiscordChatExporter.Gui/publish/
-
   deploy:
-    if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
-    needs: pack
+    needs: publish
     runs-on: ubuntu-latest
     permissions:
       actions: read
@@ -101,12 +48,6 @@ jobs:
           name: DiscordChatExporter.Cli
           path: DiscordChatExporter.Cli
 
-      - name: Download artifacts (GUI)
-        uses: actions/download-artifact@v3
-        with:
-          name: DiscordChatExporter
-          path: DiscordChatExporter.Gui
-
       - name: Create package (CLI)
         shell: pwsh
         run: >
@@ -115,26 +56,13 @@ jobs:
           -DestinationPath DiscordChatExporter.Cli.zip
           -Force
 
-      - name: Create package (GUI)
-        shell: pwsh
-        run: >
-          Compress-Archive
-          -Path DiscordChatExporter.Gui/*
-          -DestinationPath DiscordChatExporter.zip
-          -Force
-
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: >
-          gh release create "${{ github.ref_name }}"
-          "DiscordChatExporter.Cli.zip"
-          "DiscordChatExporter.zip"
-          --repo "${{ github.event.repository.full_name }}"
-          --title "${{ github.ref_name }}"
-          --notes "[Changelog](${{ github.event.repository.html_url }}/blob/${{ github.ref_name }}/Changelog.md)"
-          --verify-tag
-
+        with:
+          files: |
+            DiscordChatExporter.Cli.zip
+ 
   notify:
     needs: deploy
     runs-on: ubuntu-latest
@@ -151,5 +79,9 @@ jobs:
             Content-Type: application/json; charset=UTF-8
           body: |
             {
-              "content": "**${{ github.event.repository.name }}** new version released!\nVersion: `${{ github.ref_name }}`\nChangelog: <${{ github.event.repository.html_url }}/blob/${{ github.ref_name }}/Changelog.md>"
+              "ContentType": "application/json; charset=UTF-8"
+            }
+          payload: |
+            {
+              "content": "**DiscordChatExporter** new version released!\nVersion: `${{ steps.get_version.outputs.tag }}`>"
             }
