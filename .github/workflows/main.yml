@@ -58,7 +58,7 @@ jobs:
         with:
           files: |
             DiscordChatExporter.Cli.zip
- 
+
   notify:
     needs: deploy
     runs-on: ubuntu-latest
