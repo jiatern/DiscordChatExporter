@@ -82,3 +82,4 @@ jobs:
           payload: |
             {
               "content": "**DiscordChatExporter** new version released!\nVersion: `${{ steps.get_version.outputs.tag }}`>"
+            }
