@@ -6,9 +6,6 @@ jobs:
   publish:
     if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
     runs-on: windows-latest
-    permissions:
-      actions: write
-      contents: read
 
     env:
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
@@ -25,23 +22,17 @@ jobs:
           dotnet-version: 7.0.x
 
       - name: Publish (CLI)
-        run: >
-          dotnet publish DiscordChatExporter.Cli
-          --output DiscordChatExporter.Cli/publish/
-          --configuration Release
+        run: dotnet publish DiscordChatExporter.Cli/ -o DiscordChatExporter.Cli/bin/Publish/ --configuration Release
 
       - name: Upload artifacts (CLI)
         uses: actions/upload-artifact@v3
         with:
           name: DiscordChatExporter.Cli
-          path: DiscordChatExporter.Cli/publish/
+          path: DiscordChatExporter.Cli/bin/Publish/
 
   deploy:
     needs: publish
     runs-on: ubuntu-latest
-    permissions:
-      actions: read
-      contents: write
 
     steps:
       - name: Download artifacts (CLI)
@@ -51,14 +42,11 @@ jobs:
           path: DiscordChatExporter.Cli
 
       - name: Create package (CLI)
+        run: Compress-Archive -Path DiscordChatExporter.Cli/* -DestinationPath DiscordChatExporter.Cli.zip -Force
         shell: pwsh
-        run: >
-          Compress-Archive
-          -Path DiscordChatExporter.Cli/*
-          -DestinationPath DiscordChatExporter.Cli.zip
-          -Force
 
       - name: Create release
+        uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -68,18 +56,18 @@ jobs:
   notify:
     needs: deploy
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
 
     steps:
+      - name: Get release version
+        id: get_version
+        uses: dawidd6/action-get-tag@v1
+
       - name: Notify Discord
-        uses: tyrrrz/action-http-request@v1
+        uses: satak/webrequest-action@v1.2.4
         with:
           url: ${{ secrets.DISCORD_WEBHOOK }}
           method: POST
           headers: |
-            Content-Type: application/json; charset=UTF-8
-          body: |
             {
               "ContentType": "application/json; charset=UTF-8"
             }
