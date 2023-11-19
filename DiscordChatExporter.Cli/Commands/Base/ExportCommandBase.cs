@@ -324,7 +324,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
         // Support Ukraine callout
         if (!IsUkraineSupportMessageDisabled)
         {
-			console.Output.WriteLine("|| DiscordChat Exporter ||");
+            console.Output.WriteLine("|| DiscordChat Exporter ||");
             console.Output.WriteLine("");
         }
 
