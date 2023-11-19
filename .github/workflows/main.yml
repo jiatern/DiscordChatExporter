@@ -10,6 +10,7 @@ env:
 
 jobs:
   format:
+    if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
     runs-on: windows-latest
     permissions:
       contents: read
@@ -30,6 +31,7 @@ jobs:
           --configuration Release
 
   pack:
+    if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
     strategy:
       matrix:
         app:
