@@ -42,7 +42,7 @@ public static class ImageCdn
             ? $"https://cdn.discordapp.com/channel-icons/{channelId}/{iconHash}.gif?size={size}"
             : $"https://cdn.discordapp.com/channel-icons/{channelId}/{iconHash}.png?size={size}";
 
-    public static string GetUserAvatarUrl(Snowflake userId, string avatarHash, int size = 512) =>
+    public static string GetUserAvatarUrl(Snowflake userId, string avatarHash, int size = 64) =>
         avatarHash.StartsWith("a_", StringComparison.Ordinal)
             ? $"https://cdn.discordapp.com/avatars/{userId}/{avatarHash}.gif?size={size}"
             : $"https://cdn.discordapp.com/avatars/{userId}/{avatarHash}.png?size={size}";

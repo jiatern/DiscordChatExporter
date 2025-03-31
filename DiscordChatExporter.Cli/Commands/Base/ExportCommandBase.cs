@@ -323,33 +323,7 @@ public abstract class ExportCommandBase : DiscordCommandBase
         // Support Ukraine callout
         if (!IsUkraineSupportMessageDisabled)
         {
-            console.Output.WriteLine(
-                "┌────────────────────────────────────────────────────────────────────┐"
-            );
-            console.Output.WriteLine(
-                "│   Thank you for supporting Ukraine <3                              │"
-            );
-            console.Output.WriteLine(
-                "│                                                                    │"
-            );
-            console.Output.WriteLine(
-                "│   As Russia wages a genocidal war against my country,              │"
-            );
-            console.Output.WriteLine(
-                "│   I'm grateful to everyone who continues to                        │"
-            );
-            console.Output.WriteLine(
-                "│   stand with Ukraine in our fight for freedom.                     │"
-            );
-            console.Output.WriteLine(
-                "│                                                                    │"
-            );
-            console.Output.WriteLine(
-                "│   Learn more: https://tyrrrz.me/ukraine                            │"
-            );
-            console.Output.WriteLine(
-                "└────────────────────────────────────────────────────────────────────┘"
-            );
+            console.Output.WriteLine("|| DiscordChat Exporter ||");
             console.Output.WriteLine("");
         }
 
